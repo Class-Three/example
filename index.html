@@ -171,6 +171,76 @@ strong {
   strong-ex {
     color: rgba(259, 0, 255, 1);
   }
+
+    /*mp3*/
+    #audio-player-section {
+      position: relative;
+      background-color: #300FAF24;
+      border-radius: 20px;
+      padding: 30px 40px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      transition: all 0.4s ease;
+      overflow: hidden;
+    }
+
+    #audio-player-section::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 220px;
+      height: 80px;
+      background: rgba(0, 140, 255, 0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      animation: pulse 2s infinite;
+      z-index: -1;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.6;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1.5);
+        opacity: 0;
+      }
+    }
+
+    #click-hint {
+      font-size: 1.1rem;
+      color: #0077ff;
+      animation: bounce 1.5s infinite;
+      margin-top: 10px;
+    }
+
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+
+    .audio-player {
+      width: 300px;
+      outline: none;
+    }
+
+    /* تأثير التشغيل */
+    #audio-player-section.playing {
+      background: linear-gradient(135deg, #0099ff, #66ccff);
+      color: white;
+      box-shadow: 0 0 20px rgba(0, 153, 255, 0.7);
+    }
+
+    #audio-player-section.playing #click-hint {
+      display: none;
+    }
+    
   </style>
 </head><body>
   <!-- رأس الصفحة -->
