@@ -435,6 +435,23 @@ strong {
   </main>  <!-- تذييل الصفحة -->  <footer>
     <p>&copy; 2025 - أستاذ أمجد | <a href="#contact">رقم الهاتف</a></p>
   </footer>  <!-- ملفات JavaScript -->  <script>
+    /*mp3*/
+const audioPlayer = document.getElementById("audioPlayer");
+const section = document.getElementById("audio-player-section");
+
+audioPlayer.addEventListener("play", () => {
+  section.classList.add("playing");
+});
+
+audioPlayer.addEventListener("pause", () => {
+  section.classList.remove("playing");
+});
+
+audioPlayer.addEventListener("ended", () => {
+  section.classList.remove("playing");
+});
+
+    /*----------------*/
     // عناصر واجهة المستخدم
 const toggleDarkModeButton = document.getElementById("toggle-dark-mode");
 const showTitlesButton = document.getElementById("show-titles");
