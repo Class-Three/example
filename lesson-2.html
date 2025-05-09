@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>حساب النسبة المئوية الحجمية</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --main-bg: #f9fafc;
+      --main-text: #212529;
+      --accent: #007bff;
+      --box-bg: #ffffff;
+      --step-bg: #e8f1ff;
+      --result-bg: #d1e7dd;
+      --input-bg: #f1f1f1;
+      --note: #666;
+    }
+
+    [data-theme="dark"] {
+      --main-bg: #121212;
+      --main-text: #e0e0e0;
+      --accent: #66b2ff;
+      --box-bg: #1e1e1e;
+      --step-bg: #1f2a40;
+      --result-bg: #1a3f2b;
+      --input-bg: #2a2a2a;
+      --note: #aaa;
+    }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: var(--main-bg);
+      color: var(--main-text);
+      margin: 0;
+      transition: 0.3s;
+    }
+
+    header {
+      background-color: var(--accent);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 1.8em;
+      font-weight: bold;
+    }
+
+    .toggle-container {
+      display: flex;
+      justify-content: flex-end;
+      padding: 15px 30px 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 30px auto;
+      background: var(--box-bg);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+    }
+
+    .step, .result-box {
+      background-color: var(--step-bg);
+      padding: 15px 20px;
+      border-right: 5px solid var(--accent);
+      border-radius: 10px;
+      margin-bottom: 20px;
+      line-height: 2;
+    }
+
+    .result-box {
+      background-color: var(--result-bg);
+      border-color: #198754;
+    }
+
+    label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      background-color: var(--input-bg);
+      border: 2px solid var(--accent);
+      border-radius: 8px;
+      font-size: 1em;
+      color: var(--main-text);
+    }
+
+    button, .toggle-btn {
+      margin-top: 25px;
+      padding: 12px 24px;
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover, .toggle-btn:hover {
+      background-color: #0a66c2;
+    }
+
+    .formula {
+      font-weight: bold;
+      font-size: 1.1em;
+      text-align: center;
+      margin: 20px auto;
+      background: var(--box-bg);
+      border: 2px dashed var(--accent);
+      padding: 12px;
+      border-radius: 10px;
+      width: fit-content;
+    }
+
+    .highlight {
+      background-color: #21973B;
+      padding: 2px 6px;
+      border-radius: 5px;
+    }
+
+    .note {
+      font-size: 0.95em;
+      color: var(--note);
+      margin-top: 10px;
+    }
+
+    .error {
+      color: red;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body data-theme="dark">
+
+  <header>احسب النسبة المئوية الحجمية</header>
+
+  <div class="toggle-container">
+    <button class="toggle-btn" onclick="toggleTheme()">تبديل الوضع</button>
+  </div>
+
+  <div class="container">
+    <label for="solute">أدخل حجم المذاب (سم³):</label>
+    <input type="number" id="solute" placeholder="مثال: 5" />
+
+    <label for="solvent">أدخل حجم المذيب (سم³):</label>
+    <input type="number" id="solvent" placeholder="مثال: 45" />
+
+    <button onclick="calculate()">احسب النسبة</button>
+
+    <div id="output"></div>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const currentTheme = document.body.getAttribute('data-theme');
+      document.body.setAttribute('data-theme', currentTheme === 'light' ? 'dark' : 'light');
+    }
+
+    function calculate() {
+      const solute = parseFloat(document.getElementById('solute').value);
+      const solvent = parseFloat(document.getElementById('solvent').value);
+      const output = document.getElementById('output');
+      output.innerHTML = "";
+
+      if (isNaN(solute) || isNaN(solvent) || solute <= 0 || solvent <= 0) {
+        output.innerHTML = `<div class="error">يرجى إدخال أرقام صحيحة للمذاب والمذيب.</div>`;
+        return;
+      }
+
+      const totalVolume = solute + solvent;
+      const percentage = (solute / totalVolume) * 100;
+      const rounded = percentage.toFixed(2);
+
+      output.innerHTML = `
+        <div class="step">
+          <strong>الخطوة 1:</strong> حساب حجم المحلول الكلي...<br> = ${solute} + ${solvent} = <strong>${totalVolume} سم³</strong>
+        </div>
+
+        <div class="step">
+          <strong>الخطوة 2:</strong> قانون النسبة المئوية الحجمية:
+          <div class="formula">
+            ...(حجم المذاب ÷ حجم المحلول).... × 100
+          </div>
+        </div>
+
+        <div class="step">
+          <strong>الخطوة 3:</strong> النسبة = (${solute} ÷ ${totalVolume}) × 100 = <strong>${rounded}%</strong>
+        </div>
+
+        <div class="result-box">
+          النسبة المئوية الحجمية = <span class="highlight">${rounded}%</span>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
