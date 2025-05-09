@@ -100,12 +100,12 @@
       font-weight: bold;
       color: var(--accent-color);
     }
-    
+
     /*Move the page-------*/
     html {
       scroll-behavior: smooth;
 }
-    
+
     .reveal {
   opacity: 0;
   transform: translateY(40px);
@@ -119,7 +119,7 @@
 
 
   /*Index - List ----------*/
-  
+
   .toc {
   background: var(--section-bg);
   padding: 15px 20px;
@@ -158,7 +158,7 @@
 
 
   /*Go button */
-  
+
   .link-btn {
   margin-right: 10px;
   padding: 6px 12px;
@@ -184,7 +184,7 @@
 
 
   /*laws----------*/
-  
+
   .formula-box {
   margin-top: 10px;
   background: var(--section-bg);
@@ -221,7 +221,87 @@
   font-weight: bold;
   color: var(--accent-color);
 }
+
+  /*mp3*/
   
+  
+  
+  #audio-player-section {
+      position: relative;
+      background-color: #300FAF24;
+      border-radius: 20px;
+      padding: 30px 40px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.200);
+      text-align: center;
+      transition: all 0.4s ease;
+      overflow: hidden;
+      display: flex
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #audio-player-section::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 220px;
+      height: 80px;
+      background: rgba(0, 140, 255, 0.3);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      animation: pulse 2s infinite;
+      z-index: -1;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.6;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1.5);
+        opacity: 0;
+      }
+    }
+
+    #click-hint {
+      font-size: 1.1rem;
+      color: #0077ff;
+      animation: bounce 1.5s infinite;
+      margin-top: 10px;
+    }
+
+    @keyframes bounce {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-8px);
+      }
+    }
+
+    .audio-player {
+      width: 270px;
+      outline: none;
+      display: block;
+      margin: 0 auto;
+    }
+    
+    
+    /* تأثير التشغيل */
+    #audio-player-section.playing {
+      background: linear-gradient(135deg, #0099ff, #66ccff);
+      color: white;
+      box-shadow: 0 0 20px rgba(0, 153, 255, 0.7);
+    }
+
+    #audio-player-section.playing #click-hint {
+      display: none;
+    }
+    
+    
+
   </style>
 </head>
 <body class="dark">
@@ -242,7 +322,7 @@
     <li><a href="#s5">التحليل الكيميائي</a></li>
     <li><a href="#s6">التحليل الحجمي</a></li>
     <li><a href="#s7">طرق التعبير عن التركيز</a></li>
-    
+
   </ul>
 </nav>
   <section id="s1">
@@ -281,7 +361,7 @@
         </ul>
       </li>
       <li><strong><u>2. التحليل الكمي</u>:-</strong> يعرف كمية المادة.
-        
+
         <ul>
           <li><strong>تحليل حجمي</strong></li>
           <li><strong>تحليل وزني</strong></li>
@@ -294,13 +374,13 @@
   <section id="s6">
     <h2>سادساً: التحليل الحجمي</h2>
     <p><span class="highlight">تعريف:</span> هو <strong>تحديد كمية مادة مجهولة التركيز</strong> بواسطة تفاعلها مع <strong>مادة معلومة التركيز</strong> تُعرف بـ<strong>المحلول القياسي</strong>، وتُجرى العملية بطريقة تُسمى <strong>المعايرة</strong>.</p>
-    
-    
-    
+
+
+
     <p><span class="highlight">تعريف (موجز):</span> هو <strong>معرفة كميه المادة مجهوله التركيز </strong>مع مادة أخري<strong> معلومة التركيز</strong> تعرف بالمعايرة</p>
-    
+
   </section>
-  
+
   <section id="s7">
   <h2>سابعاً: طرق التعبير عن التركيز</h2>
   <ul class="concentration-list">
@@ -319,7 +399,7 @@
       </div>
       <button class="link-btn" onclick="location.href='#'">الأنتقال للأمثلة و التمارين</button>
     </li>
-    
+
     <li>
       <strong>2- النسبة المئوية الحجمية:</strong>
       <div class="formula-box">
@@ -335,7 +415,7 @@
       </div>
       <button class="link-btn" onclick="location.href='#'">الأنتقال للأمثلة و التمارين</button>
     </li>
-    
+
     <li>
       <strong>3- التركيز بالجرام / ديسم³:</strong>
       <div class="formula-box">
@@ -348,11 +428,11 @@
         <hr>
         <span class="bottom">الحجم بالديسم³</span>
       </div>
-  
+
 </div>
       <button class="link-btn" onclick="location.href='#'">الأنتقال للأمثلة و التمارين</button>
     </li>
-    
+
     <li>
       <strong>4- التركيز بالمول / ديسم³ (المولارية):</strong> 
       سنضيف القوانين قريباً <br>
@@ -360,25 +440,36 @@
     </li>
   </ul>
 </section>
-  
+
+<section>
+  <div id="audio-player-section">
+    
+    <audio id="audioPlayer" class="audio-player" controls>
+      <source src="https://h.top4top.io/m_3416cpc1d1.mp4" type="audio/mpeg" />
+      متصفحك لا يدعم تشغيل الصوت.
+    </audio>
+    <p id="click-hint">اضغط للاستماع</p>
+  </div>
+</section>
+
 </main>
 
 <script>
   function toggleTheme() {
     document.body.classList.toggle("dark");
   }
-  
+
   //Move the page------
-  
+
   document.addEventListener("DOMContentLoaded", function() {
   const allElements = document.body.querySelectorAll("*");
-  
+
   allElements.forEach(el => {
     if (el.offsetHeight > 0 && el.offsetWidth > 0) {
       el.classList.add('reveal');
     }
   });
-  
+
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -390,8 +481,25 @@
   }, {
     threshold: 0.1
   });
-  
+
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+});
+
+
+  //mp3------
+const audioPlayer = document.getElementById("audioPlayer");
+const section = document.getElementById("audio-player-section");
+
+audioPlayer.addEventListener("play", () => {
+  section.classList.add("playing");
+});
+
+audioPlayer.addEventListener("pause", () => {
+  section.classList.remove("playing");
+});
+
+audioPlayer.addEventListener("ended", () => {
+  section.classList.remove("playing");
 });
 </script>
 
