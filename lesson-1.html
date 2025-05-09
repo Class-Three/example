@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>مثال محلول - النسبة المئوية الحجمية</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --main-bg: #f8f9fa;
+      --main-text: #212529;
+      --accent: #0d6efd;
+      --box-bg: #ffffff;
+      --step-bg: #e9f2ff;
+      --result-bg: #d1e7dd;
+      --note-color: #555;
+    }
+
+    [data-theme="dark"] {
+      --main-bg: #121212;
+      --main-text: #e0e0e0;
+      --accent: #66b2ff;
+      --box-bg: #1e1e1e;
+      --step-bg: #1f2a40;
+      --result-bg: #1a3f2b;
+      --note-color: #aaa;
+    }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: var(--main-bg);
+      color: var(--main-text);
+      margin: 0;
+      padding: 0;
+      transition: all 0.4s ease;
+    }
+
+    header {
+      background-color: var(--accent);
+      color: white;
+      padding: 25px;
+      text-align: center;
+      font-size: 1.8em;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+
+    .container {
+      max-width: 950px;
+      margin: 30px auto;
+      background: var(--box-bg);
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+    }
+
+    h2 {
+      color: var(--accent);
+      margin-bottom: 15px;
+    }
+
+    .step {
+      background-color: var(--step-bg);
+      padding: 15px 20px;
+      border-right: 5px solid var(--accent);
+      border-radius: 10px;
+      margin-bottom: 15px;
+      line-height: 2;
+    }
+
+    .highlight {
+      background-color: #232D9B;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+
+    .formula {
+      background-color: var(--box-bg);
+      border: 2px solid var(--accent);
+      border-radius: 12px;
+      padding: 15px;
+      text-align: center;
+      margin: 20px auto;
+      max-width: 450px;
+      font-weight: bold;
+      font-size: 1.2em;
+      line-height: 2;
+    }
+
+    .result-box {
+      background-color: var(--result-bg);
+      border-right: 5px solid #198754;
+      padding: 15px 20px;
+      border-radius: 10px;
+      font-size: 1.2em;
+      margin-top: 30px;
+    }
+
+    button, .toggle-btn {
+      margin-top: 25px;
+      padding: 12px 24px;
+      background-color: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover, .toggle-btn:hover {
+      background-color: #0b5ed7;
+    }
+
+    .note {
+      font-size: 0.95em;
+      color: var(--note-color);
+      margin-top: 10px;
+    }
+
+    .toggle-container {
+      display: flex;
+      justify-content: flex-end;
+      margin: 15px 30px 0;
+    }
+  </style>
+</head>
+<body data-theme="dark">
+
+  <header>
+    مثال محلول على النسبة المئوية الحجمية
+  </header>
+
+  <div class="toggle-container">
+    <button class="toggle-btn" onclick="toggleTheme()">تبديل الوضع</button>
+  </div>
+
+  <div class="container">
+    <h2>السؤال:</h2>
+    <div class="step">
+      أُذيب <span class="highlight">45 سم³</span> من الكحول في <span class="highlight">200 سم³</span> من الماء المقطر.
+      <br>
+      احسب النسبة المئوية الحجمية للمحلول.
+    </div>
+
+    <h2>الحل النموذجي:</h2>
+
+    <div class="step">
+      <strong>الخطوة 1:</strong> حساب <span class="highlight">حجم المحلول الكلي</span>:
+      <br>
+      حجم المحلول = حجم المذاب + حجم المذيب
+      <br>
+      = 45 + 200 = <strong>245 سم³</strong>
+    </div>
+
+    <div class="step">
+      <strong>الخطوة 2:</strong> نكتب قانون <span class="highlight">النسبة المئوية الحجمية</span>:
+    </div>
+
+    <div class="formula">
+      النسبة المئوية الحجمية = <br>
+      ....(حجم المذاب ÷ حجم المحلول)....  × 100 
+    </div>
+
+    <div class="step">
+      <strong>الخطوة 3:</strong> نعوض في القانون:
+      <br>
+      = (45 ÷ 245) × 100
+    </div>
+
+    <div class="step">
+      <strong>الخطوة 4:</strong> نحسب الناتج:
+      <br>
+      = 0.1837 × 100 = <strong>18.37%</strong>
+    </div>
+
+    <div class="result-box">
+      <strong>الناتج النهائي:</strong>
+      النسبة المئوية الحجمية للمحلول = <span class="highlight">18.37%</span>
+    </div>
+
+    <button onclick="goBack()">عودة إلى الدرس</button>
+  </div>
+
+  <script>
+    function goBack() {
+      window.history.back();
+    }
+
+    function toggleTheme() {
+      const body = document.body;
+      const currentTheme = body.getAttribute("data-theme");
+      const newTheme = currentTheme === "light" ? "dark" : "light";
+      body.setAttribute("data-theme", newTheme);
+    }
+  </script>
+
+</body>
+</html>
