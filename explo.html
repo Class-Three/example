@@ -5,79 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>أداة استغلال CORS المتطورة</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .container {
-            text-align: center;
-            padding: 30px;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            width: 100%;
-            max-width: 600px;
-        }
-
-        h1 {
-            color: #333;
-            font-size: 24px;
-        }
-
-        .form-container {
-            margin-bottom: 20px;
-        }
-
-        input, select {
-            width: 80%;
-            padding: 10px;
-            font-size: 16px;
-            margin-right: 10px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-        }
-
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #28a745;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #218838;
-        }
-
-        .status {
-            margin-top: 20px;
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .result {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-            display: none;
-        }
-
-        .result pre {
-            word-wrap: break-word;
-            white-space: pre-wrap;
-        }
+        /* CSS هنا */
     </style>
 </head>
 <body>
@@ -115,7 +43,8 @@
                 method: httpMethod,
                 headers: {
                     'X-Custom-Header': 'SomeValue'
-                }
+                },
+                mode: 'cors'  // تأكد من أن CORS مفعل
             };
 
             if (httpMethod === 'POST') {
@@ -129,7 +58,7 @@
 
                 // التحقق من حالة الاستجابة
                 if (!response.ok) {
-                    throw new Error(`استجابة غير صالحة: ${response.statusText}`);
+                    throw new Error(`استجابة غير صالحة: ${response.statusText} (رمز الاستجابة: ${response.status})`);
                 }
 
                 // التحقق من رؤوس CORS
